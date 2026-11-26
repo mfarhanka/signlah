@@ -1,5 +1,6 @@
 # MediaPipe browser assets need explicit MIME types on many shared Apache hosts.
 AddType text/javascript .mjs
+AddType application/javascript .js
 AddType application/wasm .wasm
 AddType application/octet-stream .task
 

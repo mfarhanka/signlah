@@ -2749,7 +2749,9 @@ $pageLanguage = 'ms';
         async function loadAIHandModel() {
             if (aiHandLandmarker) return aiHandLandmarker;
             const mediaPipeRoot = new URL('assets/mediapipe/', document.baseURI);
-            const visionModuleUrl = new URL('vision_bundle.mjs', mediaPipeRoot).href;
+            // Shared hosting serves .js with the correct JavaScript MIME type;
+            // some hosts incorrectly serve .mjs as application/octet-stream.
+            const visionModuleUrl = new URL('vision_bundle.js', mediaPipeRoot).href;
             const wasmRootUrl = new URL('wasm/', mediaPipeRoot).href;
             const modelUrl = new URL('hand_landmarker.task', mediaPipeRoot).href;
             const vision = await import(visionModuleUrl);
