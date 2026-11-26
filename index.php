@@ -1300,7 +1300,7 @@ $pageLanguage = 'ms';
                     break;
 
                 case 'num_1_10':
-                    return renderNumberHandSVG('1-10');
+                    return renderNumberHandSVG('1');
 
                 case 'alpha_az':
                     return renderAlphabetHandSVG('A');
@@ -1717,6 +1717,16 @@ $pageLanguage = 'ms';
         // ==========================================
         function renderNumberHandSVG(numStr) {
             const n = String(numStr);
+
+            if (n === '1') {
+                return `
+                    <img src="assets/nombor/1.png"
+                         alt="Isyarat tangan Bahasa Isyarat Malaysia untuk nombor 1"
+                         class="w-full h-full object-contain bg-white"
+                         loading="lazy">
+                `;
+            }
+
             const skin = "#FAD5BC";
             const skinDark = "#E8B08E";
             const line = "#1E1410";
