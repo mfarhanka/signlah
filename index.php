@@ -1718,10 +1718,10 @@ $pageLanguage = 'ms';
         function renderNumberHandSVG(numStr) {
             const n = String(numStr);
 
-            if (n === '1') {
+            if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].includes(n)) {
                 return `
-                    <img src="assets/nombor/1.png"
-                         alt="Isyarat tangan Bahasa Isyarat Malaysia untuk nombor 1"
+                    <img src="assets/nombor/${n}.png"
+                         alt="Isyarat tangan Bahasa Isyarat Malaysia untuk nombor ${n}"
                          class="w-full h-full object-contain bg-white"
                          loading="lazy">
                 `;
@@ -2210,6 +2210,34 @@ $pageLanguage = 'ms';
                 ];
             }
 
+            // Modul Nombor: satu soalan bagi setiap gambar isyarat 1-10,
+            // disusun secara rawak tanpa mengulang nombor.
+            if (signKey === 'nombor_1_10') {
+                const allNumbers = Object.keys(NUMBER_GUIDE);
+                const numberQuestions = [...allNumbers]
+                    .sort(() => 0.5 - Math.random())
+                    .map((number, index) => {
+                        const wrongAnswers = allNumbers
+                            .filter(candidate => candidate !== number)
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 3);
+
+                        return {
+                            type: 'number_quiz',
+                            sign: targetSign,
+                            number,
+                            options: [number, ...wrongAnswers].sort(() => 0.5 - Math.random()),
+                            questionNumber: index + 1,
+                            totalQuestions: allNumbers.length
+                        };
+                    });
+
+                steps = [
+                    { type: 'flashcard', sign: targetSign },
+                    ...numberQuestions
+                ];
+            }
+
             currentSession = {
                 signKey,
                 steps,
@@ -2227,8 +2255,9 @@ $pageLanguage = 'ms';
 
         function renderLessonStep() {
             const step = currentSession.steps[currentSession.currentIndex];
+            const isNumberQuestion = step.type === 'number_quiz';
             const isAlphabetQuestion = ['alphabet_ai', 'alphabet_quiz'].includes(step.type);
-            const progress = isAlphabetQuestion
+            const progress = (isAlphabetQuestion || isNumberQuestion)
                 ? ((step.questionNumber - 1) / step.totalQuestions) * 100
                 : (currentSession.currentIndex / currentSession.steps.length) * 100;
             document.getElementById('lesson-progress-bar').style.width = `${Math.max(0, progress)}%`;
@@ -2354,6 +2383,30 @@ $pageLanguage = 'ms';
 
                         <div class="w-56 h-56 mx-auto mb-6 border-2 border-sky-200 rounded-3xl overflow-hidden bg-white shadow-xs">
                             ${renderAlphabetHandSVG(step.letter)}
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            ${step.options.map(option => `
+                                <button onclick="selectQuizOption('${option}', this)"
+                                    class="quiz-opt-btn btn-3d btn-white py-4 rounded-2xl font-black text-xl">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (step.type === 'number_quiz') {
+                setActionBtnDisabled();
+                contentArea.innerHTML = `
+                    <div class="my-auto">
+                        <span class="text-xs font-black text-duoGreenDark uppercase tracking-wider">
+                            Soalan ${step.questionNumber} daripada ${step.totalQuestions} • Kenali Nombor BIM
+                        </span>
+                        <h2 class="text-xl font-black text-gray-800 mt-1 mb-4">Apakah nombor yang ditunjukkan oleh isyarat tangan ini?</h2>
+
+                        <div class="w-56 h-56 mx-auto mb-6 border-2 border-emerald-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+                            ${renderNumberHandSVG(step.number)}
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
@@ -2536,6 +2589,9 @@ $pageLanguage = 'ms';
             if (step.type === 'alphabet_quiz') {
                 isCorrect = currentSession.selectedAnswer === step.letter;
                 correctionText = `Jawapan tepat: Huruf ${step.letter}. ${FINGERSPELL_GUIDE[step.letter]}`;
+            } else if (step.type === 'number_quiz') {
+                isCorrect = currentSession.selectedAnswer === step.number;
+                correctionText = `Jawapan tepat: Nombor ${step.number}. ${NUMBER_GUIDE[step.number]}`;
             } else if (step.type === 'quiz_match') {
                 isCorrect = currentSession.selectedAnswer === step.sign.id;
                 correctionText = `Jawapan tepat: ${step.sign.word}`;
