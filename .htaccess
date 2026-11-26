@@ -1,0 +1,19 @@
+# MediaPipe browser assets need explicit MIME types on many shared Apache hosts.
+AddType text/javascript .mjs
+AddType application/wasm .wasm
+AddType application/octet-stream .task
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(mjs|wasm|task)$">
+        Header set X-Content-Type-Options "nosniff"
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>
+
+# The camera API is available only in a secure context on deployed websites.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$ [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>

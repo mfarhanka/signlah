@@ -2748,8 +2748,12 @@ $pageLanguage = 'ms';
 
         async function loadAIHandModel() {
             if (aiHandLandmarker) return aiHandLandmarker;
-            const vision = await import('./assets/mediapipe/vision_bundle.mjs');
-            const fileset = await vision.FilesetResolver.forVisionTasks('./assets/mediapipe/wasm');
+            const mediaPipeRoot = new URL('assets/mediapipe/', document.baseURI);
+            const visionModuleUrl = new URL('vision_bundle.mjs', mediaPipeRoot).href;
+            const wasmRootUrl = new URL('wasm/', mediaPipeRoot).href;
+            const modelUrl = new URL('hand_landmarker.task', mediaPipeRoot).href;
+            const vision = await import(visionModuleUrl);
+            const fileset = await vision.FilesetResolver.forVisionTasks(wasmRootUrl);
             const commonOptions = {
                 runningMode: 'VIDEO', numHands: 1,
                 minHandDetectionConfidence: 0.55,
@@ -2759,13 +2763,13 @@ $pageLanguage = 'ms';
             try {
                 aiHandLandmarker = await vision.HandLandmarker.createFromOptions(fileset, {
                     ...commonOptions,
-                    baseOptions: { modelAssetPath: './assets/mediapipe/hand_landmarker.task', delegate: 'GPU' }
+                    baseOptions: { modelAssetPath: modelUrl, delegate: 'GPU' }
                 });
             } catch (gpuError) {
                 console.warn('GPU MediaPipe tidak tersedia, menggunakan CPU.', gpuError);
                 aiHandLandmarker = await vision.HandLandmarker.createFromOptions(fileset, {
                     ...commonOptions,
-                    baseOptions: { modelAssetPath: './assets/mediapipe/hand_landmarker.task', delegate: 'CPU' }
+                    baseOptions: { modelAssetPath: modelUrl, delegate: 'CPU' }
                 });
             }
             return aiHandLandmarker;
