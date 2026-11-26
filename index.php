@@ -2217,8 +2217,11 @@ $pageLanguage = 'ms';
 
         function renderLessonStep() {
             const step = currentSession.steps[currentSession.currentIndex];
-            const progress = ((currentSession.currentIndex) / currentSession.steps.length) * 100;
-            document.getElementById('lesson-progress-bar').style.width = `${Math.max(12, progress)}%`;
+            const isAlphabetQuestion = ['alphabet_ai', 'alphabet_quiz'].includes(step.type);
+            const progress = isAlphabetQuestion
+                ? ((step.questionNumber - 1) / step.totalQuestions) * 100
+                : (currentSession.currentIndex / currentSession.steps.length) * 100;
+            document.getElementById('lesson-progress-bar').style.width = `${Math.max(0, progress)}%`;
             document.getElementById('lesson-hearts').innerText = appState.hearts;
 
             // Sembunyikan drawer maklum balas
