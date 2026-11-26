@@ -518,31 +518,31 @@ $pageLanguage = 'ms';
         </div>
 
         <!-- Pemeriksa Isyarat AI Berasaskan Kamera (pemprosesan pada peranti) -->
-        <div id="ai-checker-modal" class="fixed inset-0 z-[70] bg-slate-950/95 max-w-[480px] mx-auto hidden flex-col">
-            <div class="px-4 py-3 flex items-center justify-between text-white">
+        <div id="ai-checker-modal" class="fixed inset-0 z-[70] bg-white max-w-[480px] mx-auto hidden flex-col">
+            <div class="px-4 py-3 flex items-center justify-between bg-white border-b-2 border-gray-100 text-gray-800">
                 <div>
-                    <div class="text-[10px] font-black uppercase tracking-widest text-sky-300">Pemeriksa Isyarat AI</div>
-                    <h3 class="text-lg font-black">Tunjukkan huruf <span id="ai-target-letter" class="text-duoYellow">A</span></h3>
+                    <div class="text-[10px] font-black uppercase tracking-widest text-duoBlue">Pemeriksa Isyarat AI</div>
+                    <h3 class="text-lg font-black">Tunjukkan huruf <span id="ai-target-letter" class="text-duoGreen">A</span></h3>
                 </div>
-                <button onclick="closeAIChecker()" class="w-10 h-10 rounded-full bg-white/10 text-xl font-black">✕</button>
+                <button onclick="closeAIChecker()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 text-xl font-black active:scale-95">✕</button>
             </div>
-            <div class="relative mx-4 rounded-3xl overflow-hidden bg-black aspect-square border-2 border-white/20">
+            <div class="relative mx-4 mt-4 rounded-3xl overflow-hidden bg-slate-100 aspect-square border-2 border-sky-200 shadow-sm">
                 <video id="ai-camera-video" class="absolute inset-0 w-full h-full object-cover -scale-x-100" autoplay muted playsinline></video>
                 <canvas id="ai-camera-canvas" class="absolute inset-0 w-full h-full -scale-x-100"></canvas>
-                <div id="ai-camera-loading" class="absolute inset-0 flex items-center justify-center bg-slate-900 text-white text-center p-6">
+                <div id="ai-camera-loading" class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-sky-50 to-emerald-50 text-gray-700 text-center p-6">
                     <div><div class="text-4xl mb-3 animate-pulse">🤖</div><p class="text-sm font-bold">Memuatkan model pengesanan tangan…</p></div>
                 </div>
             </div>
             <div class="p-4 space-y-3">
-                <div id="ai-check-result" class="bg-white/10 border border-white/20 rounded-2xl p-4 text-center text-white">
+                <div id="ai-check-result" class="bg-white border-2 border-gray-200 rounded-2xl p-4 text-center text-gray-800 shadow-sm">
                     <div id="ai-check-icon" class="text-3xl mb-1">🖐️</div>
                     <div id="ai-check-title" class="font-black">Letakkan satu tangan dalam bingkai</div>
-                    <div id="ai-check-detail" class="text-xs font-semibold text-slate-300 mt-1">Pastikan tangan jelas dan mendapat cahaya yang cukup.</div>
+                    <div id="ai-check-detail" class="text-xs font-semibold text-gray-500 mt-1">Pastikan tangan jelas dan mendapat cahaya yang cukup.</div>
                 </div>
-                <div class="h-2.5 bg-white/10 rounded-full overflow-hidden">
-                    <div id="ai-confidence-bar" class="h-full bg-duoYellow rounded-full transition-all" style="width:0%"></div>
+                <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="ai-confidence-bar" class="h-full bg-duoGreen rounded-full transition-all" style="width:0%"></div>
                 </div>
-                <p class="text-[10px] text-center text-slate-400 font-semibold">Video diproses terus pada peranti dan tidak dimuat naik.</p>
+                <p class="text-[10px] text-center text-gray-400 font-semibold">Video diproses terus pada peranti dan tidak dimuat naik.</p>
             </div>
         </div>
 
@@ -2697,7 +2697,7 @@ $pageLanguage = 'ms';
                 await loadAIHandModel();
             } catch (modelError) {
                 console.error('Model AI:', modelError);
-                loading.innerHTML = '<div><div class="text-4xl mb-3">⚠️</div><p class="text-sm font-black">Model AI gagal dimuatkan</p><p class="text-xs text-slate-300 mt-2">Muat semula halaman dengan Ctrl + F5. Semua fail model kini disimpan dalam projek.</p></div>';
+                loading.innerHTML = '<div><div class="text-4xl mb-3">⚠️</div><p class="text-sm font-black text-gray-800">Model AI gagal dimuatkan</p><p class="text-xs text-gray-500 mt-2">Muat semula halaman dengan Ctrl + F5. Semua fail model kini disimpan dalam projek.</p></div>';
                 return;
             }
 
@@ -2716,7 +2716,7 @@ $pageLanguage = 'ms';
             } catch (cameraError) {
                 console.error('Kamera:', cameraError);
                 const denied = cameraError && cameraError.name === 'NotAllowedError';
-                loading.innerHTML = `<div><div class="text-4xl mb-3">📷</div><p class="text-sm font-black">${denied ? 'Akses kamera tidak dibenarkan' : 'Kamera tidak dapat dibuka'}</p><p class="text-xs text-slate-300 mt-2">${denied ? 'Tekan ikon kamera pada bar alamat dan pilih Benarkan, kemudian cuba semula.' : 'Tutup aplikasi lain yang menggunakan kamera dan pastikan halaman dibuka melalui localhost atau HTTPS.'}</p></div>`;
+                loading.innerHTML = `<div><div class="text-4xl mb-3">📷</div><p class="text-sm font-black text-gray-800">${denied ? 'Akses kamera tidak dibenarkan' : 'Kamera tidak dapat dibuka'}</p><p class="text-xs text-gray-500 mt-2">${denied ? 'Tekan ikon kamera pada bar alamat dan pilih Benarkan, kemudian cuba semula.' : 'Tutup aplikasi lain yang menggunakan kamera dan pastikan halaman dibuka melalui localhost atau HTTPS.'}</p></div>`;
             }
         }
 
