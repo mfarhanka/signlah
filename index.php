@@ -519,14 +519,24 @@ $pageLanguage = 'ms';
 
         <!-- Pemeriksa Isyarat AI Berasaskan Kamera (pemprosesan pada peranti) -->
         <div id="ai-checker-modal" class="fixed inset-0 z-[70] bg-white max-w-[480px] mx-auto hidden flex-col">
-            <div class="px-4 py-3 flex items-center justify-between bg-white border-b-2 border-gray-100 text-gray-800">
-                <div>
-                    <div class="text-[10px] font-black uppercase tracking-widest text-duoBlue">Pemeriksa Isyarat AI</div>
-                    <h3 class="text-lg font-black">Tunjukkan huruf <span id="ai-target-letter" class="text-duoGreen">A</span></h3>
+            <!-- Kekalkan bar kemajuan pelajaran yang sama seperti skrin soalan -->
+            <div class="px-4 pt-4 pb-2 flex items-center gap-3 bg-white">
+                <button onclick="closeAIChecker()" class="w-9 h-9 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 font-black text-xl">
+                    ✕
+                </button>
+                <div class="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden p-0.5">
+                    <div id="ai-progress-bar" class="h-full bg-duoGreen rounded-full transition-all duration-300" style="width:10%"></div>
                 </div>
-                <button onclick="closeAIChecker()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 text-xl font-black active:scale-95">✕</button>
+                <div class="flex items-center gap-1">
+                    <span class="text-lg">❤️</span>
+                    <span id="ai-lesson-hearts" class="font-black text-duoRed text-base">5</span>
+                </div>
             </div>
-            <div class="relative mx-4 mt-4 rounded-3xl overflow-hidden bg-slate-100 aspect-square border-2 border-sky-200 shadow-sm">
+            <div class="px-5 pt-2 pb-1">
+                <div class="text-[10px] font-black uppercase tracking-widest text-duoBlue">Pemeriksa Isyarat AI</div>
+                <h3 class="text-lg font-black text-gray-800">Tunjukkan huruf <span id="ai-target-letter" class="text-duoGreen">A</span> kepada kamera</h3>
+            </div>
+            <div class="relative mx-4 mt-2 rounded-3xl overflow-hidden bg-slate-100 aspect-square border-2 border-sky-200 shadow-sm">
                 <video id="ai-camera-video" class="absolute inset-0 w-full h-full object-cover -scale-x-100" autoplay muted playsinline></video>
                 <canvas id="ai-camera-canvas" class="absolute inset-0 w-full h-full -scale-x-100"></canvas>
                 <div id="ai-camera-loading" class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-sky-50 to-emerald-50 text-gray-700 text-center p-6">
@@ -2680,6 +2690,8 @@ $pageLanguage = 'ms';
             aiLastVideoTime = -1;
             aiAutoAdvanced = false;
             document.getElementById('ai-target-letter').innerText = aiTargetLetter;
+            document.getElementById('ai-progress-bar').style.width = document.getElementById('lesson-progress-bar').style.width;
+            document.getElementById('ai-lesson-hearts').innerText = appState.hearts;
             document.getElementById('ai-check-icon').innerText = '🖐️';
             document.getElementById('ai-check-title').innerText = 'Letakkan satu tangan dalam bingkai';
             document.getElementById('ai-check-detail').innerText = ['J', 'Z'].includes(aiTargetLetter)
