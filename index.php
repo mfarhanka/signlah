@@ -2143,41 +2143,60 @@ $pageLanguage = 'ms';
                 }
             ];
 
-            // Modul Abjad mempunyai satu soalan bagi setiap huruf.
-            // A sentiasa menjadi Soalan 1; B-Z diacak untuk soalan seterusnya.
+            // Modul Abjad: 26 latihan AI + 26 soalan pilihan jawapan.
+            // Kesemua 52 soalan diacak dan huruf yang sama tidak boleh berturutan.
             if (signKey === 'abjad_a_z') {
                 const allLetters = Object.keys(FINGERSPELL_GUIDE);
-                const randomizedRemainingLetters = allLetters
-                    .filter(letter => letter !== 'A')
-                    .sort(() => 0.5 - Math.random());
-                const quizLetters = ['A', ...randomizedRemainingLetters];
+                const totalAlphabetQuestions = allLetters.length * 2;
+
+                let alphabetQuestions = allLetters.flatMap(letter => {
+                    const wrongAnswers = allLetters
+                        .filter(candidate => candidate !== letter)
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 3);
+
+                    return [
+                        { type: 'alphabet_ai', sign: targetSign, letter },
+                        {
+                            type: 'alphabet_quiz',
+                            sign: targetSign,
+                            letter,
+                            options: [letter, ...wrongAnswers].sort(() => 0.5 - Math.random())
+                        }
+                    ];
+                });
+
+                // Ulang kocok sehingga tiada dua soalan huruf sama bersebelahan.
+                for (let attempt = 0; attempt < 100; attempt++) {
+                    const shuffled = [...alphabetQuestions].sort(() => 0.5 - Math.random());
+                    const hasAdjacentDuplicate = shuffled.some((question, index) =>
+                        index > 0 && question.letter === shuffled[index - 1].letter
+                    );
+                    if (!hasAdjacentDuplicate) {
+                        alphabetQuestions = shuffled;
+                        break;
+                    }
+                }
+
+                // Jaminan susunan sekiranya kocokan rawak masih menghasilkan pasangan sama.
+                if (alphabetQuestions.some((question, index) => index > 0 && question.letter === alphabetQuestions[index - 1].letter)) {
+                    const letterOrder = [...allLetters].sort(() => 0.5 - Math.random());
+                    const byKey = new Map(alphabetQuestions.map(question => [`${question.type}-${question.letter}`, question]));
+                    alphabetQuestions = letterOrder.flatMap((letter, index) => [
+                        byKey.get(`alphabet_ai-${letter}`),
+                        byKey.get(`alphabet_quiz-${letterOrder[(index + 2) % letterOrder.length]}`)
+                    ]);
+                }
+
+                alphabetQuestions = alphabetQuestions.map((question, index) => ({
+                    ...question,
+                    questionNumber: index + 1,
+                    totalQuestions: totalAlphabetQuestions
+                }));
 
                 steps = [
                     { type: 'flashcard', sign: targetSign },
-                    ...quizLetters.flatMap((letter, index) => {
-                        const wrongAnswers = allLetters
-                            .filter(candidate => candidate !== letter)
-                            .sort(() => 0.5 - Math.random())
-                            .slice(0, 3);
-
-                        return [
-                            {
-                                type: 'alphabet_ai',
-                                sign: targetSign,
-                                letter,
-                                questionNumber: (index * 2) + 1,
-                                totalQuestions: quizLetters.length * 2
-                            },
-                            {
-                                type: 'alphabet_quiz',
-                                sign: targetSign,
-                                letter,
-                                questionNumber: (index * 2) + 2,
-                                totalQuestions: quizLetters.length * 2,
-                                options: [letter, ...wrongAnswers].sort(() => 0.5 - Math.random())
-                            }
-                        ];
-                    })
+                    ...alphabetQuestions
                 ];
             }
 
