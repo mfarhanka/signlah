@@ -2295,10 +2295,10 @@ $pageLanguage = 'ms';
                             Soalan ${step.questionNumber} daripada ${step.totalQuestions} • Latihan Kamera AI
                         </span>
                         <h2 class="text-xl font-black text-gray-800 mt-1 mb-2">Tunjukkan isyarat huruf <span class="text-duoBlue">${step.letter}</span> kepada kamera</h2>
-                        <p class="text-xs font-semibold text-gray-500 mb-4">Ikut gambar rujukan. AI akan membawa anda ke soalan jawapan selepas isyarat disahkan.</p>
+                        <p class="text-xs font-semibold text-gray-500 mb-8">Bentuk isyarat berdasarkan ingatan anda. AI akan membawa anda ke soalan jawapan selepas isyarat disahkan.</p>
 
-                        <div class="w-64 h-64 mx-auto mb-6 border-2 border-sky-200 rounded-3xl overflow-hidden bg-white shadow-xs">
-                            ${renderAlphabetHandSVG(step.letter)}
+                        <div class="w-24 h-24 mx-auto mb-8 rounded-3xl bg-gradient-to-br from-sky-100 to-emerald-100 border-2 border-sky-200 flex items-center justify-center text-5xl shadow-sm">
+                            📷
                         </div>
 
                         <button type="button" onclick="openAIChecker('${step.letter}')"
